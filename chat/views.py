@@ -2,6 +2,7 @@
 
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
+from django.shortcuts import resolve_url
 # from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils.decorators import method_decorator
 from django.urls import reverse_lazy
@@ -16,7 +17,7 @@ from chat.models import RolePlayingRoom
 class RolePlayingRoomCreateView(CreateView):
     model = RolePlayingRoom
     form_class = RolePlayingRoomForm
-    success_url = reverse_lazy("role_playing_room_new")  # 페이지 성공 후에 이동할 페이지 주소 지정
+    # success_url = reverse_lazy("role_playing_room_new")  # 페이지 성공 후에 이동할 페이지 주소 지정
 
     def form_valid(self, form):
         role_playing_room = form.save(commit=False)
@@ -38,7 +39,7 @@ from django.views.generic import UpdateView
 class RolePlayingRoomUpdateView(UpdateView):
     model = RolePlayingRoom
     form_class = RolePlayingRoomForm
-    success_url = reverse_lazy("role_playing_room_new")
+    # success_url = reverse_lazy("role_playing_room_new")
 
     def get_queryset(self):
         qs = super().get_queryset()
