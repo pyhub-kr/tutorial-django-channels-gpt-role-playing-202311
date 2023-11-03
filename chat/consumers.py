@@ -38,6 +38,19 @@ class RolePlayingRoomConsumer(JsonWebsocketConsumer):
                     "message": assistant_message,
                 })
 
+    def receive_json(self, content_dict, **kwargs):
+        if content_dict["type"] == "user-message":
+            assistant_message = self.gpt_query(user_query=content_dict["message"])
+            self.send_json({
+                "type": "assistant-message",
+                "message": assistant_message,
+            })
+        else:
+            self.send_json({
+                "type": "error",
+                "message": f"Invalid type: {content_dict['type']}",
+            })
+
     def gpt_query(self, command_query: str = None, user_query: str = None) -> str:
         if command_query is not None and user_query is not None:
             raise ValueError("command_query 인자와 user_query 인자는 동시에 사용할 수 없습니다.")

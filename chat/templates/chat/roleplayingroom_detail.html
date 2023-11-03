@@ -113,10 +113,11 @@ function addMessage(message, isMe) {
         e.preventDefault();
         const message = e.target.message.value.trim();
         if(message.length > 0) {
+            addMessage(message, true);  // ⭐️ 추가
             // 서버로 웹소켓 메시지를 전송하는 코드.
             //  - 서버 단에서 "전달받은 문자열"을 JSON 디코딩하므로
             //  - 클라이언트 단에서 JSON 인코딩한 문자열을 웹소켓으로 전달
-            ws.send(JSON.stringify({ message: message }));
+            ws.send(JSON.stringify({ type: "user-message", message: message }));
             e.target.reset();
         }
     };
