@@ -42,6 +42,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    "daphne",  # runserver 명령을 패치
     # django apps
     "django.contrib.admin",
     "django.contrib.auth",
@@ -84,6 +85,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "mysite.wsgi.application"
+ASGI_APPLICATION = "mysite.asgi.application"  # 추가
 
 
 # Database
