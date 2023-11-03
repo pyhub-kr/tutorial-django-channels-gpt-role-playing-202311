@@ -38,20 +38,7 @@
                     ({{ roleplayingroom.gpt_role }}와 {{ roleplayingroom.my_role }}의 대화)
                 </div>
                 <div class="card-body">
-                    <ul id="chat-message-list">
-
-{# FIXME: 샘플 채팅 메세지 #}
-<li class="chat-message">
-    <span class="message">Good morning, welcome to Starbucks! What can I get for you today?</span>
-</li>
-<li class="chat-message me">
-    <span class="message">Yes, I would like a grande Americano with an extra shot of expresso and a splash of almond milk, please.</span>
-</li>
-<li class="chat-message">
-    <span class="message">Of course, that soulds like a great choice. Would you like any pastries or snacks to go with your coffee today?</span>
-</li>
-
-                    </ul>
+                    <ul id="chat-message-list"></ul>
                 </div>
                 <div class="card-footer">
                     <div class="d-flex gap-2">
@@ -79,6 +66,15 @@
 {{ roleplayingroom.pk|json_script:"room-pk" }}
 
 <script>
+function addMessage(message, isMe) {
+    const messageList = document.getElementById("chat-message-list");
+    const messageElement = document.createElement("li");
+    messageElement.className = "chat-message" + (isMe ? " me" : "");
+    messageElement.innerHTML = `<span class="message">${message}</span>`;
+    messageList.appendChild(messageElement);
+    messageList.scrollTop = messageList.scrollHeight;
+}
+
 (function() {
     const room_pk = document.querySelector("#room-pk").textContent;
     const ws = new WebSocket(`ws://${window.location.host}/ws/chat/${room_pk}/`);
@@ -89,8 +85,26 @@
     // 서버로부터 웹소켓 메시지를 받았을 때 호출되는 함수.
     ws.onmessage = function(e) {
         console.group("[onmessage]");
-        console.log(typeof e.data);
-        console.log(e.data);
+        // console.log(typeof e.data);
+        // console.log(e.data);
+
+        // 🔥 HERE
+        const message_obj = JSON.parse(e.data);
+
+        if ( message_obj.type === "assistant-message" ) {
+            const { message } = message_obj;
+            console.log("assistant-message:", message);
+            // TODO: 채팅 UI에 메시지를 추가하는 코드.
+            addMessage(message, false);  // 🔥 추가됨
+        }
+        else if ( message_obj.type === "openai-error" ) {
+            const { message } = message_obj;
+            alert(`Error: ${message}`);
+        }
+        else {
+            console.error("알 수 없는 메시지 타입입니다.", message_obj);
+        }
+
         console.groupEnd();
     };
 
